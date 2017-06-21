@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div class="page page-albums  active">
+            <div class="albums">
+            </div>
+        </div>
+
+        <div class="page page-playing">
+            <div class="cover" style="background-image:url(https://i.scdn.co/image/20a546e75d213ffcb87f9bda7aecb55760c330a1)"></div>
+            <div class="content">
+                <div class="grow"></div>
+                <div class="details">
+                    <div class="album-artist">Lorde</div>
+                    <div class="album-name">Melodrama</div>
+                    <div class="album-year">2017</div>
+                </div>
+                <div class="track-list">
+                    <div class="track">
+                        <div class="track-name">Green Light</div>
+                        <div class="track-duration">3:55</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <webview class="spotify-driver" src="https://open.spotify.com/collection/albums" allowpopups></webview>
+    </body>
+    
+    <script>
+        // You can also require other files to run in this process
+        if (typeof module === 'object') {window.module = module; module = undefined;}
+        window.$ = window.jQuery = require('./jquery.min.js')
+        require('./injektor.js')
+        if (window.module) module = window.module;
+    </script>
+</html>

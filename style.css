@@ -1,0 +1,142 @@
+@font-face {
+	font-family: spotify-circular;
+	src: url(https://open.scdn.co/fonts/CircularSpUIv3T-Light.woff2) format("woff2"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Light.woff) format("woff"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Light.ttf) format("ttf");
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: spotify-circular;
+	src: url(https://open.scdn.co/fonts/CircularSpUIv3T-Book.woff2) format("woff2"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Book.woff) format("woff"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Book.ttf) format("ttf");
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: spotify-circular;
+	src: url(https://open.scdn.co/fonts/CircularSpUIv3T-Bold.woff2) format("woff2"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Bold.woff) format("woff"), url(https://open.scdn.co/fonts/CircularSpUIv3T-Bold.ttf) format("ttf");
+	font-weight: 600;
+	font-style: normal;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: spotify-circular, Circular;
+	color: white;
+}
+
+body {
+	background: #020a33;
+}
+
+webview.spotify-driver {
+	visibility: hidden;
+	position: absolute;
+	top: 0;
+}
+
+.page {
+	width: 100vw;
+	height: 100vh;
+	display: none;
+}
+
+.page.active {
+	display: initial;
+}
+
+.albums {
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.album {
+	background-size: cover;
+	width: 50vw;
+}
+
+.album:after {
+	content: "";
+	padding-top: 100%;
+	float: left;
+}
+
+.cover {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vw;
+	background-size: cover;
+	z-index: -1;
+}
+
+.details {
+	background: linear-gradient(to top, rgba(2, 10, 51, 1) 2%, rgba(2, 10, 51, 0) 100%);
+	height: 230px;
+	position: relative;
+}
+
+.album-artist {
+	font-size: 94px;
+	opacity: 0.15;
+	position: absolute;
+	bottom: -1px;
+}
+
+.album-name {
+	font-size: 46px;
+	font-weight: 600;
+	position: absolute;
+	bottom: 20px;
+	left: 19px;
+}
+
+.album-year {
+	font-size: 20px;
+	opacity: 0.3;
+	position: absolute;
+	bottom: 29px;
+	right: 15px;
+	font-weight: 300;
+}
+
+.track-list {
+	height: 200px;
+	width: 100%;
+	background: #020a33;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.grow {
+	flex-grow: 1;
+	max-height: calc(100vw - 230px);
+}
+
+.track {
+	height: 32px;
+	border-bottom: 2px solid transparent;
+	display: flex;
+	font-weight: 300;
+	padding: 0 15px 0 22px;
+}
+
+.track-name {
+	font-size: 18px;
+	flex-grow: 1;
+}
+
+.track-duration {
+	font-feature-settings: "tnum";
+	font-size: 15px;
+	opacity: 0.5;
+}
