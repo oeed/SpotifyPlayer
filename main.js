@@ -23,8 +23,12 @@ function createWindow() {
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 340,
+        width: 360,
         height: 600,
+        minWidth: 360,
+        maxWidth: 360,
+        titleBarStyle: 'hiddenInset',
+        fullscreenable: false,
         nodeIntegration: "iframe",
         webPreferences: {
             // The `plugins` have to be enabled.

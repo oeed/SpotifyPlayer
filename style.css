@@ -28,6 +28,8 @@ html, body {
 
 body {
 	background: #020a33;
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
 }
 
 webview.spotify-driver {
@@ -43,18 +45,81 @@ webview.spotify-driver {
 }
 
 .page.active {
-	display: initial;
+	display: block;
 }
 
-.page.in, .page.out {
+.page-playing.visible {
 	position: absolute;
 	top: 0;
 	left: 0;
-	display: initial;
+	min-height: 100vh;
+	display: block;
+	z-index: 1000;
 }
 
-.page-albums {
-	z-index: -10;
+.page-playing.visible .content {
+	opacity: 0;
+}
+
+.page-playing.visible .details div {
+	opacity: 0;
+}
+
+.page-playing.visible .track {
+	opacity: 0;
+}
+
+.page-playing.in .content {
+	animation: fade-in 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+	animation-delay: 0.0s;
+}
+
+.page-playing.in .details div {
+	animation-name: slide-in;
+	animation-duration: 3s;
+	animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+	animation-fill-mode: forwards;
+}
+
+.page-playing.in .track {
+	animation: fade-in 0.8s ease-in forwards;
+	animation-delay: 1.5s;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in {
+	from {
+		opacity: 0;
+		transform: translateX(-100vw);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.page-albums.out {
+	animation: fade-out 0.6s ease-in forwards;
 }
 
 .albums {
@@ -99,7 +164,7 @@ webview.spotify-driver {
 }
 
 .cover.animate {
-	transition: transform 0.5s ease-out;
+	transition: transform 1s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .details {
@@ -110,9 +175,11 @@ webview.spotify-driver {
 
 .album-artist {
 	font-size: 94px;
-	opacity: 0.15;
+	color: rgba(255, 255, 255, 0.15);
 	position: absolute;
 	bottom: -1px;
+	animation-delay: 1.40s;
+	white-space: nowrap;
 }
 
 .album-name {
@@ -121,19 +188,20 @@ webview.spotify-driver {
 	position: absolute;
 	bottom: 20px;
 	left: 19px;
+	animation-delay: 1.00s;
 }
 
 .album-year {
 	font-size: 20px;
-	opacity: 0.3;
+	color: rgba(255, 255, 255, 0.3);
 	position: absolute;
 	bottom: 29px;
 	right: 15px;
 	font-weight: 300;
+	animation-delay: 1.10s;
 }
 
 .track-list {
-	height: 200px;
 	width: 100%;
 	background: #020a33;
 }
@@ -155,15 +223,24 @@ webview.spotify-driver {
 	display: flex;
 	font-weight: 300;
 	padding: 0 15px 0 22px;
+	opacity: 0.8;
+}
+
+.track.active, .track:hover {
+	opacity: 1;
 }
 
 .track-name {
 	font-size: 18px;
 	flex-grow: 1;
+	white-space: no-wrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .track-duration {
 	font-feature-settings: "tnum";
 	font-size: 15px;
 	opacity: 0.5;
+	padding-left: 15px;
 }

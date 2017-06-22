@@ -10,7 +10,8 @@ $(document).ready(function() {
         }, function(error, cookies) {
             if (cookies[0]) {
                 accessToken = cookies[0].value;
-                launch();
+                // launchRenderer();
+                launchPlayer();
             }
             else {
                 console.error("Cookie not found");
@@ -24,11 +25,9 @@ var API_HOST = "https://api.spotify.com/v1";
 
 var albums = [];
 
-function launch() {
+function launchRenderer() {
     console.log("Lift off!");
     getAlbums(function() {
-
-        console.log(albums);
         // Populate the albums page
         var $albums = $(".albums").html("");
         for (var i = 0; i < albums.length; i++) {
@@ -36,6 +35,7 @@ function launch() {
             var id = albums[i].id;
             var $album = $(`<div class="album" id="${id}" style="background-image:url(${image})"></div>`).click(function() {
                 openAlbum(this.id);
+                return false;
             });
             $albums.append($album);
         }
@@ -49,12 +49,39 @@ function albumByID(id) {
     }
 }
 
+function albumColours(id, callback) {
+    var album = albumByID(id);
+    if (localStorage["colours:" + id]) {
+        console.log("Cached");
+        var cached = JSON.parse(localStorage["colours:" + id]);
+        callback(cached[0], cached[1], cached[2]);
+        return;
+    }
+
+    var image = new Image();
+    // image.crossOrigin = 'anonymous';
+    image.src = album.images[0].url;
+    console.log("Calculating");
+
+    ColorTunes.launch(image, $('<canvas>')[0], function(backgroundColour, primaryColour, secondaryColour) {
+        localStorage["colours:" + id] = JSON.stringify([backgroundColour, primaryColour, secondaryColour]);
+        callback(backgroundColour, primaryColour, secondaryColour);
+    });
+}
+
+function rgb(colour) {
+    return "rgb(" + colour + ")";
+}
+
+function rgba(colour, opacity) {
+    return "rgba(" + colour + "," + opacity + ")";
+}
+
 function openAlbum(id) {
     // animate $album's cover moving up to the full position (although this is actually done backwards)
     var album = albumByID(id);
     var $album = $(".album#" + id);
-    $(".page-albums").addClass("out");
-    $(".page-playing").addClass("in");
+    $(".page-playing").addClass("visible");
 
     var $cover = $(".cover");
     var offset = $album.offset();
@@ -64,11 +91,35 @@ function openAlbum(id) {
     $cover.css("transform", `scale(0.5) translate(${x}px, ${y}px)`).css("background-image", "url(" + album.images[0].url + ")");
     $cover.addClass($album.index() % 2 == 0 ? "left" : "right");
     $album.addClass("hide");
-    setTimeout(function() {
-        $cover.addClass("animate");
-        $cover.css("transform", "");
-    }, 20);
+    albumColours(id, function(backgroundColour, primaryColour, secondaryColour) {
+        $("body, .track-list").css("background", rgb(backgroundColour));
+        $(".details").css("background", "linear-gradient(to top, " + rgba(backgroundColour, 1) + " 2%, " + rgba(backgroundColour, 0) + " 100%)");
+        $(".content").css("color", rgb(primaryColour));
 
+        $(".album-artist").text(album.artists[0].name).css("color", rgba(secondaryColour, 0.15));
+        $(".album-name").text(album.name);
+        $(".album-year").text(album.release_date.getFullYear()).css("color", rgba(secondaryColour, 0.8));;
+
+        var $tracks = $(".track-list").html("");
+
+        for (var i = 0; i < album.tracks.length; i++) {
+            var track = album.tracks[i];
+            var name = track.name;
+            var duration = Math.floor(track.duration_ms / 60000) + ":" + ("0" + Math.round(track.duration_ms / 1000) % 60).substr(-2, 2);
+            var $track = $(`<div class="track">
+                                <div class="track-name">${name}</div>
+                                <div class="track-duration">${duration}</div>
+                            </div>`);
+            $tracks.append($track);
+        }
+
+        $(".page-albums").addClass("out");
+        $(".page-playing").addClass("in");
+        setTimeout(function() {
+            $cover.addClass("animate");
+            $cover.css("transform", "");
+        }, 20);
+    });
 }
 
 function request(path, data, success) {
@@ -86,6 +137,7 @@ function request(path, data, success) {
 function filterAlbum(album) {
     album.sortArtist = album.artists[0].name.toLowerCase().replace(/^the\s+/, "");
     album.release_date = new Date(album.release_date);
+    album.tracks = album.tracks.items;
 }
 
 function getAlbums(complete) {
