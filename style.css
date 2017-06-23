@@ -30,6 +30,7 @@ body {
 	background: #020a33;
 	-webkit-user-select: none;
 	-webkit-app-region: drag;
+	overflow-x: hidden;
 }
 
 webview.spotify-driver {
@@ -210,6 +211,7 @@ webview.spotify-driver {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	overflow: hidden;
 }
 
 .grow {
@@ -243,4 +245,68 @@ webview.spotify-driver {
 	font-size: 15px;
 	opacity: 0.5;
 	padding-left: 15px;
+}
+
+.volume {
+	font-feature-settings: "tnum";
+	position: absolute;
+	left: 0;
+	top: 50vh;
+	width: 100vw;
+	margin-top: -60px;
+	text-align: center;
+	font-size: 60px;
+	pointer-events: none;
+	opacity: 0;
+	text-shadow: 0 5px 60px rgba(0, 0, 0, 0.5);
+}
+
+.volume.update {
+	opacity: 1;
+}
+
+.volume.update-in {
+	animation: volume-update-in 0.15s forwards;
+}
+
+.volume.update-out {
+	animation: volume-update-out 0.15s forwards;
+}
+
+.volume.pulse {
+	animation: volume-pulse 0.15s forwards;
+}
+
+@keyframes volume-update-in {
+	from {
+		opacity: 0;
+		transform: scale(0.4);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes volume-update-out {
+	from {
+		opacity: 1;
+		transform: none;
+	}
+
+	to {
+		opacity: 0;
+		transform: scale(1.5);
+	}
+}
+
+@keyframes volume-pulse {
+	from, to {
+		transform: scale(1);
+	}
+
+	50% {
+		transform: scale(1.1);
+	}
 }

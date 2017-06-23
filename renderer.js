@@ -10,7 +10,7 @@ $(document).ready(function() {
         }, function(error, cookies) {
             if (cookies[0]) {
                 accessToken = cookies[0].value;
-                // launchRenderer();
+                launchRenderer();
                 launchPlayer();
             }
             else {
@@ -38,6 +38,38 @@ function launchRenderer() {
                 return false;
             });
             $albums.append($album);
+        }
+    });
+
+    var lastScrollLeft = 0;
+    var volumeIsUpdateIn = false;
+    var volumeIsPulse = false;
+    var volumeHideTimeout;
+    $(window).on("mousewheel", function(event) {
+        if (Math.abs(event.originalEvent.deltaY) < Math.abs(event.originalEvent.deltaX)) {
+            setVolume(player.volume - event.originalEvent.deltaX * 40);
+            var oldText = $(".volume").text();
+            var newText = Math.round((player.volume / Math.pow(2, 16)) * 100) + "%";
+            $(".volume").text(newText);
+            if (!volumeIsUpdateIn) {
+                $(".volume").addClass("update-in").removeClass("update-out");
+                volumeIsUpdateIn = true;
+            }
+            else if (!volumeIsPulse && oldText != newText) {
+                volumeIsPulse = true;
+                $(".volume").removeClass("update-in");
+                $(".volume").addClass("pulse update");
+                setTimeout(function() {
+                    $(".volume").removeClass("pulse");
+                    volumeIsPulse = false;
+                }, 160);
+            }
+            clearTimeout(volumeHideTimeout);
+            volumeHideTimeout = setTimeout(function() {
+                volumeIsUpdateIn = false;
+                volumeIsPulse = false;
+                $(".volume").removeClass("update-in pulse update").addClass("update-out");
+            }, 1000);
         }
     });
 }
